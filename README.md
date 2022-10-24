@@ -4,9 +4,9 @@
 Create a program that test and stress API
 
 ## Phases 
-1. Contact an API 
-2. Can configure the parameters of the call of the API
-3. Can configure all parameters for the API
+1. Contact an API OK
+2. Can configure the call of the API
+3. Install programm
 4. Store result in files
 5. Can call many time an API 
 6. Measure the time of the call 

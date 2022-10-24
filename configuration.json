@@ -1,0 +1,5 @@
+{
+    "Verb":"GET",
+    "Uri":"http://localhost:10000/congressman",
+    "Parameters":["2","mandates"]
+}

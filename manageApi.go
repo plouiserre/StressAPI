@@ -7,11 +7,27 @@ import (
 )
 
 type manageApi struct {
-	//result *string
+	configuration Configuration
+	result        string
 }
 
-func (ma manageApi) CallApi() string {
-	response, err := http.Get("http://localhost:10000/congressmans/")
+func (ma *manageApi) CallApi() string {
+	confFile := jsonFile{}
+
+	confFile.GetConfiguration("configuration.json")
+
+	ma.configuration = *confFile.configuration
+
+	if ma.configuration.Verb == "GET" {
+		ma.CallGetEndpoint()
+	}
+
+	return ma.result
+}
+
+func (ma *manageApi) CallGetEndpoint() {
+	uri := ma.GetCompleteUri()
+	response, err := http.Get(uri)
 
 	if err != nil {
 		fmt.Println(err)
@@ -23,9 +39,13 @@ func (ma manageApi) CallApi() string {
 		fmt.Println(errData)
 	}
 
-	result := (string(responseData))
+	ma.result = (string(responseData))
+}
 
-	//ma.result = &result
-
-	return result
+func (ma *manageApi) GetCompleteUri() string {
+	uri := ma.configuration.Uri
+	for i := 0; i < len(ma.configuration.Parameters); i++ {
+		uri += "/" + ma.configuration.Parameters[i]
+	}
+	return uri
 }
