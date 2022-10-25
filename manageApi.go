@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -20,6 +23,8 @@ func (ma *manageApi) CallApi() string {
 
 	if ma.configuration.Verb == "GET" {
 		ma.CallGetEndpoint()
+	} else if ma.configuration.Verb == "POST" {
+		ma.CallPostEndpoint()
 	}
 
 	return ma.result
@@ -40,6 +45,8 @@ func (ma *manageApi) CallGetEndpoint() {
 	}
 
 	ma.result = (string(responseData))
+
+	fmt.Println(response.StatusCode)
 }
 
 func (ma *manageApi) GetCompleteUri() string {
@@ -48,4 +55,25 @@ func (ma *manageApi) GetCompleteUri() string {
 		uri += "/" + ma.configuration.Parameters[i]
 	}
 	return uri
+}
+
+func (ma *manageApi) CallPostEndpoint() {
+	var body map[string]string
+	err_json := json.Unmarshal([]byte(ma.configuration.Body), &body)
+	if err_json != nil {
+		log.Fatal(err_json)
+	} else {
+		json_data, err_marshal := json.Marshal(body)
+		if err_marshal != nil {
+			log.Fatal(err_marshal)
+		} else {
+			resp, err := http.Post(ma.configuration.Uri, "application/json", bytes.NewBuffer(json_data))
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			fmt.Println(resp.StatusCode)
+		}
+	}
 }
