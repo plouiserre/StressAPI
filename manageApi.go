@@ -21,15 +21,19 @@ func (ma *manageApi) CallApi() string {
 
 	ma.configuration = *confFile.configuration
 
+	//TODO manage when the verb is unknown
 	if ma.configuration.Verb == "GET" {
 		ma.CallGetEndpoint()
 	} else if ma.configuration.Verb == "POST" {
 		ma.CallPostEndpoint()
+	} else if ma.configuration.Verb == "DELETE" {
+		ma.CallDeleteEndpoint()
 	}
 
 	return ma.result
 }
 
+//TODO defer
 func (ma *manageApi) CallGetEndpoint() {
 	uri := ma.GetCompleteUri()
 	response, err := http.Get(uri)
@@ -37,6 +41,8 @@ func (ma *manageApi) CallGetEndpoint() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	defer response.Body.Close()
 
 	responseData, errData := ioutil.ReadAll(response.Body)
 
@@ -49,6 +55,22 @@ func (ma *manageApi) CallGetEndpoint() {
 	fmt.Println(response.StatusCode)
 }
 
+//TODO améliorer
+func (ma *manageApi) CallDeleteEndpoint() {
+	uri := ma.GetCompleteUri()
+	req, _ := http.NewRequest(http.MethodDelete, uri, nil)
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer resp.Body.Close()
+
+	fmt.Println(resp.StatusCode)
+}
+
 func (ma *manageApi) GetCompleteUri() string {
 	uri := ma.configuration.Uri
 	for i := 0; i < len(ma.configuration.Parameters); i++ {
@@ -57,6 +79,7 @@ func (ma *manageApi) GetCompleteUri() string {
 	return uri
 }
 
+//TODO defer
 func (ma *manageApi) CallPostEndpoint() {
 	var body map[string]string
 	err_json := json.Unmarshal([]byte(ma.configuration.Body), &body)
