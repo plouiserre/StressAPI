@@ -21,7 +21,6 @@ func (ma *manageApi) CallApi() string {
 
 	ma.configuration = *confFile.configuration
 
-	//TODO manage when the verb is unknown
 	if ma.configuration.Verb == "GET" {
 		ma.CallGetEndpoint()
 	} else if ma.configuration.Verb == "POST" {
@@ -30,6 +29,8 @@ func (ma *manageApi) CallApi() string {
 		ma.CallDeleteEndpoint()
 	} else if ma.configuration.Verb == "PUT" {
 		ma.CallPutEndpoint()
+	} else {
+		fmt.Println("Error verb unknown")
 	}
 
 	return ma.result
@@ -86,7 +87,11 @@ func (ma *manageApi) ManageNewRequest(httpMethod string, uri string, json_data [
 func (ma *manageApi) GetCompleteUri() string {
 	uri := ma.configuration.Uri
 	for i := 0; i < len(ma.configuration.Parameters); i++ {
-		uri += "/" + ma.configuration.Parameters[i]
+		if i == 0 {
+			uri += ma.configuration.Parameters[i]
+		} else {
+			uri += "/" + ma.configuration.Parameters[i]
+		}
 	}
 	return uri
 }
