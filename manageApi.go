@@ -35,7 +35,6 @@ func (ma *manageApi) CallApi() string {
 	return ma.result
 }
 
-//TODO defer
 func (ma *manageApi) CallGetEndpoint() {
 	uri := ma.GetCompleteUri()
 	response, err := http.Get(uri)
@@ -57,10 +56,21 @@ func (ma *manageApi) CallGetEndpoint() {
 	fmt.Println(response.StatusCode)
 }
 
-//factoriser la fin avec la partie PUT
 func (ma *manageApi) CallDeleteEndpoint() {
 	uri := ma.GetCompleteUri()
-	req, _ := http.NewRequest(http.MethodDelete, uri, nil)
+	ma.ManageNewRequest(http.MethodDelete, uri, nil)
+}
+
+func (ma *manageApi) CallPutEndpoint() {
+	uri := ma.GetCompleteUri()
+	is_ok, json_data := ma.GetJsonData()
+	if is_ok {
+		ma.ManageNewRequest(http.MethodPut, uri, json_data)
+	}
+}
+
+func (ma *manageApi) ManageNewRequest(httpMethod string, uri string, json_data []byte) {
+	req, _ := http.NewRequest(httpMethod, uri, bytes.NewBuffer(json_data))
 	client := &http.Client{}
 	resp, err := client.Do(req)
 
@@ -73,34 +83,6 @@ func (ma *manageApi) CallDeleteEndpoint() {
 	fmt.Println(resp.StatusCode)
 }
 
-//TODO factoriser la partie Body
-func (ma *manageApi) CallPutEndpoint() {
-	uri := ma.GetCompleteUri()
-	var body map[string]string
-	err_json := json.Unmarshal([]byte(ma.configuration.Body), &body)
-	if err_json != nil {
-		log.Fatal(err_json)
-	} else {
-		json_data, err_marshal := json.Marshal(body)
-		if err_marshal != nil {
-			log.Fatal(err_marshal)
-		} else {
-			req, _ := http.NewRequest(http.MethodPut, uri, bytes.NewBuffer(json_data))
-			client := &http.Client{}
-			resp, err := client.Do(req)
-
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			defer resp.Body.Close()
-
-			fmt.Println(resp.StatusCode)
-		}
-	}
-
-}
-
 func (ma *manageApi) GetCompleteUri() string {
 	uri := ma.configuration.Uri
 	for i := 0; i < len(ma.configuration.Parameters); i++ {
@@ -109,24 +91,33 @@ func (ma *manageApi) GetCompleteUri() string {
 	return uri
 }
 
-//TODO defer
 func (ma *manageApi) CallPostEndpoint() {
+	is_ok, json_data := ma.GetJsonData()
+	if is_ok {
+		resp, err := http.Post(ma.configuration.Uri, "application/json", bytes.NewBuffer(json_data))
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(resp.StatusCode)
+	}
+}
+
+func (ma *manageApi) GetJsonData() (bool, []byte) {
 	var body map[string]string
+
 	err_json := json.Unmarshal([]byte(ma.configuration.Body), &body)
 	if err_json != nil {
 		log.Fatal(err_json)
+		return false, nil
 	} else {
 		json_data, err_marshal := json.Marshal(body)
 		if err_marshal != nil {
 			log.Fatal(err_marshal)
+			return false, nil
 		} else {
-			resp, err := http.Post(ma.configuration.Uri, "application/json", bytes.NewBuffer(json_data))
-
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			fmt.Println(resp.StatusCode)
+			return true, json_data
 		}
 	}
 }
