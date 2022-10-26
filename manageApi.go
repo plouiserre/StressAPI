@@ -28,6 +28,8 @@ func (ma *manageApi) CallApi() string {
 		ma.CallPostEndpoint()
 	} else if ma.configuration.Verb == "DELETE" {
 		ma.CallDeleteEndpoint()
+	} else if ma.configuration.Verb == "PUT" {
+		ma.CallPutEndpoint()
 	}
 
 	return ma.result
@@ -55,7 +57,7 @@ func (ma *manageApi) CallGetEndpoint() {
 	fmt.Println(response.StatusCode)
 }
 
-//TODO améliorer
+//factoriser la fin avec la partie PUT
 func (ma *manageApi) CallDeleteEndpoint() {
 	uri := ma.GetCompleteUri()
 	req, _ := http.NewRequest(http.MethodDelete, uri, nil)
@@ -69,6 +71,34 @@ func (ma *manageApi) CallDeleteEndpoint() {
 	defer resp.Body.Close()
 
 	fmt.Println(resp.StatusCode)
+}
+
+//TODO factoriser la partie Body
+func (ma *manageApi) CallPutEndpoint() {
+	uri := ma.GetCompleteUri()
+	var body map[string]string
+	err_json := json.Unmarshal([]byte(ma.configuration.Body), &body)
+	if err_json != nil {
+		log.Fatal(err_json)
+	} else {
+		json_data, err_marshal := json.Marshal(body)
+		if err_marshal != nil {
+			log.Fatal(err_marshal)
+		} else {
+			req, _ := http.NewRequest(http.MethodPut, uri, bytes.NewBuffer(json_data))
+			client := &http.Client{}
+			resp, err := client.Do(req)
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			defer resp.Body.Close()
+
+			fmt.Println(resp.StatusCode)
+		}
+	}
+
 }
 
 func (ma *manageApi) GetCompleteUri() string {
