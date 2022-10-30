@@ -1,0 +1,6 @@
+{
+    "Verb":"DELETE",
+    "Uri":"http://localhost:10000/congressman/",
+    "Parameters":["525"],
+    "Body" : "{\"Uid\": \"PA666440\",\"Civility\": \"M.\",\"FirstName\": \"Pierre-Louis\",\"LastName\": \"Serré\",\"Alpha\": \"SERRE66\",\"Trigramme\": \"PLS\",\"BirthDate\": \"1989-03-28 00:00:00\",\"BirthCity\": \"Versailles\",\"BirthDepartment\": \"Yvelines\",\"BirthCountry\": \"France\",\"Jobtitle\": \"Ingénieur\",\"CatSocPro\": \"Professions geek\",\"FamSocPro\": \"Cadres et professions intellectuelles supérieures\"}"
+}

@@ -4,7 +4,9 @@ import "fmt"
 
 func main() {
 	api := manageApi{}
-	result := api.CallApi()
+	confFile := jsonFile{}
+	helper := helper{}
+	result := api.CallApi(&confFile, helper)
 	fmt.Println("Response Api")
 	fmt.Println(result)
 }
