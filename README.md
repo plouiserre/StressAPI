@@ -5,8 +5,8 @@ Create a program that test and stress API
 
 ## Phases 
 1. Contact an API OK
-2. Can configure the call of the API
-3. Install programm
+2. Can configure the call of the API OK
+3. Install programm and clean the organization of the code
 4. Store result in files
 5. Can call many time an API 
 6. Measure the time of the call 
@@ -14,3 +14,6 @@ Create a program that test and stress API
 8. Can call many APIs in a workflow
 9. Call APIs with asynchronism mode
 10. Can parallelise the call
+
+## Features to do
+1. Manage when the api called is down

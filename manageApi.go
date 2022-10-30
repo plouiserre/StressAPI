@@ -1,25 +1,28 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 )
 
+//TODO manage when the server is not answered add in readme
+
 type manageApi struct {
 	configuration Configuration
 	result        string
+	helper        IHelper
+	uri           string
+	httpCode      int
 }
 
-func (ma *manageApi) CallApi() string {
-	confFile := jsonFile{}
+func (ma *manageApi) CallApi(confFile IConfiguration, helper IHelper) string {
+	ma.helper = helper
 
-	confFile.GetConfiguration("configuration.json")
+	confFile.GetConfigurationFromJson("configuration.json")
 
-	ma.configuration = *confFile.configuration
+	ma.configuration = *confFile.GetConfiguration()
 
 	if ma.configuration.Verb == "GET" {
 		ma.CallGetEndpoint()
@@ -37,8 +40,9 @@ func (ma *manageApi) CallApi() string {
 }
 
 func (ma *manageApi) CallGetEndpoint() {
-	uri := ma.GetCompleteUri()
-	response, err := http.Get(uri)
+	ma.GetCompleteUri()
+
+	response, err := ma.helper.GetHttp(ma.uri)
 
 	if err != nil {
 		fmt.Println(err)
@@ -46,7 +50,9 @@ func (ma *manageApi) CallGetEndpoint() {
 
 	defer response.Body.Close()
 
-	responseData, errData := ioutil.ReadAll(response.Body)
+	ma.httpCode = response.StatusCode
+
+	responseData, errData := ma.helper.ReadAllIoutil(response.Body)
 
 	if errData != nil {
 		fmt.Println(errData)
@@ -58,22 +64,26 @@ func (ma *manageApi) CallGetEndpoint() {
 }
 
 func (ma *manageApi) CallDeleteEndpoint() {
-	uri := ma.GetCompleteUri()
-	ma.ManageNewRequest(http.MethodDelete, uri, nil)
+	ma.GetCompleteUri()
+	ma.ManageNewRequest(http.MethodDelete, nil)
 }
 
 func (ma *manageApi) CallPutEndpoint() {
-	uri := ma.GetCompleteUri()
+	ma.GetCompleteUri()
 	is_ok, json_data := ma.GetJsonData()
 	if is_ok {
-		ma.ManageNewRequest(http.MethodPut, uri, json_data)
+		ma.ManageNewRequest(http.MethodPut, json_data)
 	}
 }
 
-func (ma *manageApi) ManageNewRequest(httpMethod string, uri string, json_data []byte) {
-	req, _ := http.NewRequest(httpMethod, uri, bytes.NewBuffer(json_data))
-	client := &http.Client{}
-	resp, err := client.Do(req)
+func (ma *manageApi) ManageNewRequest(httpMethod string, json_data []byte) {
+	req, err_new_request := ma.helper.NewRequestHttp(httpMethod, ma.uri, json_data)
+
+	if err_new_request != nil {
+		log.Fatal(err_new_request)
+	}
+
+	resp, err := ma.helper.DoClient(req)
 
 	if err != nil {
 		log.Fatal(err)
@@ -81,10 +91,12 @@ func (ma *manageApi) ManageNewRequest(httpMethod string, uri string, json_data [
 
 	defer resp.Body.Close()
 
+	ma.httpCode = resp.StatusCode
+
 	fmt.Println(resp.StatusCode)
 }
 
-func (ma *manageApi) GetCompleteUri() string {
+func (ma *manageApi) GetCompleteUri() {
 	uri := ma.configuration.Uri
 	for i := 0; i < len(ma.configuration.Parameters); i++ {
 		if i == 0 {
@@ -93,17 +105,19 @@ func (ma *manageApi) GetCompleteUri() string {
 			uri += "/" + ma.configuration.Parameters[i]
 		}
 	}
-	return uri
+	ma.uri = uri
 }
 
 func (ma *manageApi) CallPostEndpoint() {
 	is_ok, json_data := ma.GetJsonData()
 	if is_ok {
-		resp, err := http.Post(ma.configuration.Uri, "application/json", bytes.NewBuffer(json_data))
+		resp, err := ma.helper.PostHttp(ma.configuration.Uri, json_data)
 
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		ma.httpCode = resp.StatusCode
 
 		fmt.Println(resp.StatusCode)
 	}

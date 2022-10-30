@@ -11,7 +11,7 @@ type jsonFile struct {
 	configuration *Configuration
 }
 
-func (jf *jsonFile) GetConfiguration(nameFile string) {
+func (jf *jsonFile) GetConfigurationFromJson(nameFile string) {
 	var conf Configuration
 
 	file, err := os.Open(nameFile)
@@ -27,4 +27,8 @@ func (jf *jsonFile) GetConfiguration(nameFile string) {
 	jf.configuration = &conf
 
 	defer file.Close()
+}
+
+func (jf *jsonFile) GetConfiguration() *Configuration {
+	return jf.configuration
 }
