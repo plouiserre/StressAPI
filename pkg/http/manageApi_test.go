@@ -3,12 +3,14 @@ package http
 
 import (
 	"testing"
+
+	mock "github.com/plouiserre/stressapi/mock"
 )
 
 type manageApiTest struct {
-	confFileMock confFileMock
-	helperMock   helperMock
-	manageApi    manageApi
+	configurationMock mock.ConfigurationMock
+	helperMock        mock.HttpHelperMock
+	manageApi         ManageApi
 }
 
 func TestGetUriWithParameters(t *testing.T) {
@@ -30,10 +32,10 @@ func TestGetUriWithoutParameters(t *testing.T) {
 func TestGetCongressmans(t *testing.T) {
 	manageApiTest := ManageApiInitialiedCallApi(true, "GET")
 	resultWanted := `{"congressman":"bob"}`
-	if manageApiTest.helperMock.isGetHttpCalled == false {
+	if manageApiTest.helperMock.IsGetHttpCalled == false {
 		t.Fatalf("The method GetHttpCalled from HttpHelper is not called")
 	}
-	if manageApiTest.helperMock.isReadAllIoutil == false {
+	if manageApiTest.configurationMock.IsReadAllIoutil == false {
 		t.Fatalf("The method ReadAllIoutil from HttpHelper is not called")
 	}
 	if manageApiTest.manageApi.result != resultWanted {
@@ -47,7 +49,7 @@ func TestGetCongressmans(t *testing.T) {
 func TestPostCongressman(t *testing.T) {
 	manageApiTest := ManageApiInitialiedCallApi(true, "POST")
 
-	if manageApiTest.helperMock.isPostHttpCalled == false {
+	if manageApiTest.helperMock.IsPostHttpCalled == false {
 		t.Fatalf("The method GetHttpCalled from HttpHelper is not called")
 	}
 
@@ -60,10 +62,10 @@ func TestPostCongressman(t *testing.T) {
 func TestPutCongressman(t *testing.T) {
 	manageApiTest := ManageApiInitialiedCallApi(true, "PUT")
 
-	if manageApiTest.helperMock.isNewRequestCalled == false {
+	if manageApiTest.helperMock.IsNewRequestCalled == false {
 		t.Fatalf("The method NewRequestCalled from HttpHelper is not called")
 	}
-	if manageApiTest.helperMock.isDoClientCalled == false {
+	if manageApiTest.helperMock.IsDoClientCalled == false {
 		t.Fatalf("The method DoClientCalled from HttpHelper is not called")
 	}
 
@@ -75,10 +77,10 @@ func TestPutCongressman(t *testing.T) {
 func TestDeleteCongressman(t *testing.T) {
 	manageApiTest := ManageApiInitialiedCallApi(true, "DELETE")
 
-	if manageApiTest.helperMock.isNewRequestCalled == false {
+	if manageApiTest.helperMock.IsNewRequestCalled == false {
 		t.Fatalf("The method NewRequestCalled from HttpHelper is not called")
 	}
-	if manageApiTest.helperMock.isDoClientCalled == false {
+	if manageApiTest.helperMock.IsDoClientCalled == false {
 		t.Fatalf("The method DoClientCalled from HttpHelper is not called")
 	}
 
@@ -88,16 +90,17 @@ func TestDeleteCongressman(t *testing.T) {
 }
 
 func ManageApiInitialiedCallApi(isParameters bool, verb string) manageApiTest {
-	api := manageApi{}
-	confFile := confFileMock{}
-	confFile.isParameters = isParameters
-	confFile.Verb = verb
-	helper := helperMock{}
-	api.CallApi(confFile, &helper)
+	api := ManageApi{}
+	configurationMock := mock.ConfigurationMock{}
+	jsonFile := mock.JsonFileMock{}
+	jsonFile.IsParameters = isParameters
+	jsonFile.Verb = verb
+	helper := mock.HttpHelperMock{}
+	api.CallApi(&jsonFile, &helper, &configurationMock)
 	manageApiTest := manageApiTest{
-		manageApi:    api,
-		confFileMock: confFile,
-		helperMock:   helper,
+		manageApi:         api,
+		configurationMock: configurationMock,
+		helperMock:        helper,
 	}
 	return manageApiTest
 }

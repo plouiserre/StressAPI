@@ -1,6 +1,7 @@
 package configuration
 
+import "io"
+
 type IConfigurationHelper interface {
-	GetConfigurationFromJson(nameFile string)
-	GetConfiguration() *Configuration
+	ReadAllIoutil(body io.Reader) ([]byte, error)
 }

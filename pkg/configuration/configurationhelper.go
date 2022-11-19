@@ -5,10 +5,10 @@ import (
 	"io/ioutil"
 )
 
-type configurationhelper struct {
+type Configurationhelper struct {
 }
 
-func (ch configurationhelper) ReadAllIoutil(body io.Reader) ([]byte, error) {
+func (ch Configurationhelper) ReadAllIoutil(body io.Reader) ([]byte, error) {
 	responseData, errData := ioutil.ReadAll(body)
 	return responseData, errData
 }
