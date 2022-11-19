@@ -1,4 +1,4 @@
-package main
+package configuration
 
 type Configuration struct {
 	Verb       string   `json:"Verb"`

@@ -1,4 +1,4 @@
-package main
+package configuration
 
 import (
 	"encoding/json"
@@ -7,11 +7,12 @@ import (
 	"os"
 )
 
-type jsonFile struct {
+type JsonFile struct {
 	configuration *Configuration
 }
 
-func (jf *jsonFile) GetConfigurationFromJson(nameFile string) {
+// TODO put nameFile in parameters of the struct
+func (jf *JsonFile) GetConfigurationFromJson(nameFile string) {
 	var conf Configuration
 
 	file, err := os.Open(nameFile)
@@ -29,6 +30,6 @@ func (jf *jsonFile) GetConfigurationFromJson(nameFile string) {
 	defer file.Close()
 }
 
-func (jf *jsonFile) GetConfiguration() *Configuration {
+func (jf *JsonFile) GetConfiguration() *Configuration {
 	return jf.configuration
 }
