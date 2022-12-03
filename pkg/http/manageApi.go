@@ -7,27 +7,33 @@ import (
 	"net/http"
 
 	conf "github.com/plouiserre/stressapi/pkg/configuration"
+	result "github.com/plouiserre/stressapi/pkg/result"
 )
 
 //TODO manage when the server is not answered add in readme
+//TODO put result in public variable
 
 type ManageApi struct {
 	configuration conf.Configuration
 	result        string
 	httpHelper    IHttpHelper
-	uri           string
 	httpCode      int
 	confHelper    conf.IConfigurationHelper
+	Uri           string
 }
 
-func (ma *ManageApi) CallApi(jsonFile conf.IJsonfile, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) string {
+//TODO - modifier le dossier result
+// - créer un objet result 
+// - response string
+// - httpcode int 
+// modifier TU
+func (ma *ManageApi) CallApi(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) result.Result {
+
 	ma.httpHelper = httpHelper
 
 	ma.confHelper = confHelper
 
-	jsonFile.GetConfigurationFromJson("../../configuration.json")
-
-	ma.configuration = *jsonFile.GetConfiguration()
+	ma.configuration = configuration
 
 	if ma.configuration.Verb == "GET" {
 		ma.CallGetEndpoint()
@@ -40,32 +46,41 @@ func (ma *ManageApi) CallApi(jsonFile conf.IJsonfile, httpHelper IHttpHelper, co
 	} else {
 		fmt.Println("Error verb unknown")
 	}
+	
+	resultApi := result.Result{
+		Response: ma.result,
+		HttpCode: ma.httpCode,
+		Body: ma.configuration.Body,
+		UriCalled: ma.configuration.Uri,
+	}
 
-	return ma.result
+	return resultApi
 }
 
 func (ma *ManageApi) CallGetEndpoint() {
 	ma.GetCompleteUri()
 
-	response, err := ma.httpHelper.GetHttp(ma.uri)
+	response, err := ma.httpHelper.GetHttp(ma.Uri)
 
 	if err != nil {
 		fmt.Println(err)
+		ma.httpCode = 408
+	} else {
+
+		defer response.Body.Close()
+
+		ma.httpCode = response.StatusCode
+
+		responseData, errData := ma.confHelper.ReadAllIoutil(response.Body)
+
+		if errData != nil {
+			fmt.Println(errData)
+		}
+
+		ma.result = (string(responseData))
+
+		fmt.Println(response.StatusCode)
 	}
-
-	defer response.Body.Close()
-
-	ma.httpCode = response.StatusCode
-
-	responseData, errData := ma.confHelper.ReadAllIoutil(response.Body)
-
-	if errData != nil {
-		fmt.Println(errData)
-	}
-
-	ma.result = (string(responseData))
-
-	fmt.Println(response.StatusCode)
 }
 
 func (ma *ManageApi) CallDeleteEndpoint() {
@@ -82,7 +97,7 @@ func (ma *ManageApi) CallPutEndpoint() {
 }
 
 func (ma *ManageApi) ManageNewRequest(httpMethod string, json_data []byte) {
-	req, err_new_request := ma.httpHelper.NewRequestHttp(httpMethod, ma.uri, json_data)
+	req, err_new_request := ma.httpHelper.NewRequestHttp(httpMethod, ma.Uri, json_data)
 
 	if err_new_request != nil {
 		log.Fatal(err_new_request)
@@ -110,7 +125,7 @@ func (ma *ManageApi) GetCompleteUri() {
 			uri += "/" + ma.configuration.Parameters[i]
 		}
 	}
-	ma.uri = uri
+	ma.Uri = uri
 }
 
 func (ma *ManageApi) CallPostEndpoint() {

@@ -6,6 +6,7 @@ import (
 	conf "github.com/plouiserre/stressapi/pkg/configuration"
 )
 
+//TODO check if it is not use delete this file
 type JsonFileMock struct {
 	configuration *conf.Configuration
 	IsParameters  bool
