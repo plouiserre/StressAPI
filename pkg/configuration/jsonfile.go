@@ -11,7 +11,6 @@ type JsonFile struct {
 	configuration *Configuration
 }
 
-// TODO put nameFile in parameters of the struct
 func (jf *JsonFile) GetConfigurationFromJson(nameFile string) {
 	var conf Configuration
 
