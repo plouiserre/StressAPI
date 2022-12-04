@@ -10,23 +10,15 @@ import (
 	result "github.com/plouiserre/stressapi/pkg/result"
 )
 
-//TODO manage when the server is not answered add in readme
-//TODO put result in public variable
-
 type ManageApi struct {
 	configuration conf.Configuration
-	result        string
+	responseRequest        string
 	httpHelper    IHttpHelper
 	httpCode      int
 	confHelper    conf.IConfigurationHelper
 	Uri           string
 }
 
-//TODO - modifier le dossier result
-// - créer un objet result 
-// - response string
-// - httpcode int 
-// modifier TU
 func (ma *ManageApi) CallApi(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) result.Result {
 
 	ma.httpHelper = httpHelper
@@ -48,7 +40,7 @@ func (ma *ManageApi) CallApi(configuration conf.Configuration, httpHelper IHttpH
 	}
 	
 	resultApi := result.Result{
-		Response: ma.result,
+		Response: ma.responseRequest,
 		HttpCode: ma.httpCode,
 		Body: ma.configuration.Body,
 		UriCalled: ma.configuration.Uri,
@@ -77,7 +69,7 @@ func (ma *ManageApi) CallGetEndpoint() {
 			fmt.Println(errData)
 		}
 
-		ma.result = (string(responseData))
+		ma.responseRequest = (string(responseData))
 
 		fmt.Println(response.StatusCode)
 	}

@@ -38,8 +38,8 @@ func TestGetCongressmans(t *testing.T) {
 	if manageApiTest.configurationMock.IsReadAllIoutil == false {
 		t.Fatalf("The method ReadAllIoutil from HttpHelper is not called")
 	}
-	if manageApiTest.manageApi.result != resultWanted {
-		t.Fatalf("Result returned by api is %s and now the program is returning %s", resultWanted, manageApiTest.manageApi.result)
+	if manageApiTest.manageApi.responseRequest != resultWanted {
+		t.Fatalf("Result returned by api is %s and now the program is returning %s", resultWanted, manageApiTest.manageApi.responseRequest)
 	}
 	if manageApiTest.manageApi.httpCode != 200 {
 		t.Fatalf("Result returned by api is 200 and now the program is returning %d", manageApiTest.manageApi.httpCode)
