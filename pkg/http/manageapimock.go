@@ -11,10 +11,15 @@ type ManageApiMock struct {
 	IsCallApiCalling bool
 }
 
-
-func (mm *ManageApiMock)CallApi(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) result.Result{
+func (mm *ManageApiMock)CallApi(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result{		
+	results  := make([]result.Result, 1)
+	resultMock := result.Result{
+		HttpCode: 200,
+	}
+	results[0] = resultMock
+	
 	mm.IsCallApiCalling = true
-	return result.Result{}
+	return results
 }
 func (mm ManageApiMock)CallGetEndpoint(){
 	

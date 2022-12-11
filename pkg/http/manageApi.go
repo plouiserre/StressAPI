@@ -19,34 +19,40 @@ type ManageApi struct {
 	Uri           string
 }
 
-func (ma *ManageApi) CallApi(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) result.Result {
+func (ma *ManageApi) CallApi(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result {
 
 	ma.httpHelper = httpHelper
 
 	ma.confHelper = confHelper
 
 	ma.configuration = configuration
-
-	if ma.configuration.Verb == "GET" {
-		ma.CallGetEndpoint()
-	} else if ma.configuration.Verb == "POST" {
-		ma.CallPostEndpoint()
-	} else if ma.configuration.Verb == "DELETE" {
-		ma.CallDeleteEndpoint()
-	} else if ma.configuration.Verb == "PUT" {
-		ma.CallPutEndpoint()
-	} else {
-		fmt.Println("Error verb unknown")
-	}
 	
-	resultApi := result.Result{
-		Response: ma.responseRequest,
-		HttpCode: ma.httpCode,
-		Body: ma.configuration.Body,
-		UriCalled: ma.configuration.Uri,
+	var results []result.Result
+	results  = make([]result.Result, ma.configuration.Times)
+	
+	for i := 0; i < ma.configuration.Times; i++ {
+
+		if ma.configuration.Verb == "GET" {
+			ma.CallGetEndpoint()
+		} else if ma.configuration.Verb == "POST" {
+			ma.CallPostEndpoint()
+		} else if ma.configuration.Verb == "DELETE" {
+			ma.CallDeleteEndpoint()
+		} else if ma.configuration.Verb == "PUT" {
+			ma.CallPutEndpoint()
+		} else {
+			fmt.Println("Error verb unknown")
+		}
+		
+		results[i] = result.Result{
+			Response: ma.responseRequest,
+			HttpCode: ma.httpCode,
+			Body: ma.configuration.Body,
+			UriCalled: ma.configuration.Uri,
+		}
 	}
 
-	return resultApi
+	return results
 }
 
 func (ma *ManageApi) CallGetEndpoint() {

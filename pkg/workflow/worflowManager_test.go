@@ -11,6 +11,7 @@ import (
 type workflowManagerTest struct {
 }
 
+
 func TestCallMethods(t *testing.T) {
 	workflowManager := WorkflowManager{
 		Conf : configuration.Configuration{},	

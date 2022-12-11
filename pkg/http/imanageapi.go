@@ -6,7 +6,7 @@ import (
 )
 
 type IManageApi interface {
-	CallApi(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) result.Result	
+	CallApi(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result	
 	CallGetEndpoint() 
 	CallDeleteEndpoint() 
 	CallPutEndpoint()

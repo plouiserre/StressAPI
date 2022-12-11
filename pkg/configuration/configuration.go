@@ -6,4 +6,5 @@ type Configuration struct {
 	Parameters  []string `json:"Parameters"`
 	Body        string   `json:"Body"`
 	StoreFolder string   `json:"StoreFolder"`
+	Times       int      `json:"Times"`
 }
