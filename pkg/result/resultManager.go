@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+//TODO correct bug for save during the first call
 type ResultManager struct {
 	StoreFolder string
 	Result Result
@@ -69,4 +70,8 @@ func (rm ResultManager) GetMessage() string{
 	httpCode := strconv.Itoa(rm.Result.HttpCode)
 	msg := dateMsg+": httpCode :"+httpCode+" req :\""+rm.Result.UriCalled+"\" body :\""+rm.Result.Body+"\"  response :"+rm.Result.Response
 	return msg
+}
+
+func (rm *ResultManager)SetResult(result Result){
+	rm.Result = result
 }
