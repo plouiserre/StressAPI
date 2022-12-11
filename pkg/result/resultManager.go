@@ -68,7 +68,7 @@ func (rm ResultManager) GetMessage() string{
 	dateNow := time.Now()
 	dateMsg := dateNow.Format("2006-01-02 15:04:05.000000")	
 	httpCode := strconv.Itoa(rm.Result.HttpCode)
-	msg := dateMsg+": httpCode :"+httpCode+" req :\""+rm.Result.UriCalled+"\" body :\""+rm.Result.Body+"\"  response :"+rm.Result.Response
+	msg := dateMsg+": httpCode :"+httpCode+" timing request \""+ rm.Result.RequestDuration+ "\" req :\""+rm.Result.UriCalled+"\" body :\""+rm.Result.Body+"\"  response :"+rm.Result.Response
 	return msg
 }
 
