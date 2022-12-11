@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	conf "github.com/plouiserre/stressapi/pkg/configuration"
 	result "github.com/plouiserre/stressapi/pkg/result"
@@ -16,43 +17,51 @@ type ManageApi struct {
 	httpHelper    IHttpHelper
 	httpCode      int
 	confHelper    conf.IConfigurationHelper
+	results []result.Result
 	Uri           string
 }
 
-func (ma *ManageApi) CallApi(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result {
+func (ma *ManageApi) CallApis(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result {
 
 	ma.httpHelper = httpHelper
 
 	ma.confHelper = confHelper
 
-	ma.configuration = configuration
+	ma.configuration = configuration	
 	
-	var results []result.Result
-	results  = make([]result.Result, ma.configuration.Times)
+	ma.results  = make([]result.Result, ma.configuration.Times)
 	
 	for i := 0; i < ma.configuration.Times; i++ {
-
-		if ma.configuration.Verb == "GET" {
-			ma.CallGetEndpoint()
-		} else if ma.configuration.Verb == "POST" {
-			ma.CallPostEndpoint()
-		} else if ma.configuration.Verb == "DELETE" {
-			ma.CallDeleteEndpoint()
-		} else if ma.configuration.Verb == "PUT" {
-			ma.CallPutEndpoint()
-		} else {
-			fmt.Println("Error verb unknown")
-		}
-		
-		results[i] = result.Result{
-			Response: ma.responseRequest,
-			HttpCode: ma.httpCode,
-			Body: ma.configuration.Body,
-			UriCalled: ma.configuration.Uri,
-		}
+		ma.CallApi(i)
 	}
 
-	return results
+	return ma.results
+}
+
+func (ma *ManageApi) CallApi(timeCalled int){
+	start := time.Now()
+	if ma.configuration.Verb == "GET" {
+		ma.CallGetEndpoint()
+	} else if ma.configuration.Verb == "POST" {
+		ma.CallPostEndpoint()
+	} else if ma.configuration.Verb == "DELETE" {
+		ma.CallDeleteEndpoint()
+	} else if ma.configuration.Verb == "PUT" {
+		ma.CallPutEndpoint()
+	} else {
+		fmt.Println("Error verb unknown")
+	}
+	end := time.Now()
+	
+	requestDuration :=end.Sub(start)
+	
+	ma.results[timeCalled] = result.Result{
+		Response: ma.responseRequest,
+		HttpCode: ma.httpCode,
+		Body: ma.configuration.Body,
+		UriCalled: ma.configuration.Uri,
+		RequestDuration: requestDuration.String(),
+	}
 }
 
 func (ma *ManageApi) CallGetEndpoint() {

@@ -116,7 +116,7 @@ func ManageApiInitialiedCallApi(isParameters bool, verb string, timesCalled int)
 	conf.Verb = verb
 	conf.Body = "{\"congressman\":\"bob\"}"
 	conf.Times = timesCalled
-	api.CallApi(conf, &helper, &configurationMock)
+	api.CallApis(conf, &helper, &configurationMock)
 	manageApiTest := manageApiTest{
 		manageApi:         api,
 		configurationMock: configurationMock,
