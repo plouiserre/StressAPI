@@ -13,13 +13,14 @@ type workflowManagerTest struct {
 
 
 func TestCallMethods(t *testing.T) {
-	workflowManager := WorkflowManager{
-		Conf : configuration.Configuration{},	
+	wm := WorkflowManager{
+		Confs : []configuration.Configuration{},	
 	}
+	wm.Confs = make([]configuration.Configuration, 1)
 	
 	api := http.ManageApiMock{}
 	resultMock := result.ResultManagerMock{}
-	workflowManager.HandleRequests(&api, &resultMock)	
+	wm.HandleRequests(&api, &resultMock)	
 	
 	if api.IsCallApiCalling == false{
 		t.Fatalf("Method CallApi is not call in the test TestCallCallApi")

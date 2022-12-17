@@ -41,7 +41,6 @@ func (hm *HttpHelperMock) NewRequestHttp(httpMethod string, uri string, json_dat
 
 func (hm *HttpHelperMock) DoClient(req *http.Request) (*http.Response, error) {
 	hm.IsDoClientCalled = true
-	hm.CallTimes += 1
 	responbody := ioutil.NopCloser(bytes.NewBuffer([]byte(`{"value":"fixed"}`)))
 	return &http.Response{
 		StatusCode: 200,

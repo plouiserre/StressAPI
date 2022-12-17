@@ -7,15 +7,23 @@ import (
 )
 
 type WorkflowManager struct {
-	Conf configuration.Configuration	
+	Confs []configuration.Configuration	
+	api http.IManageApi
+	response resultPkg.IResultManager
 }
 
 func (wf WorkflowManager) HandleRequests(api http.IManageApi, response resultPkg.IResultManager) {
+	wf.api = api
+	wf.response = response
+	wf.HandleRequest()
+}
+
+func(wf WorkflowManager) HandleRequest(){
 	confFile := configuration.Configurationhelper{}
 	helper := http.Httphelper{}
-	results := api.CallApis(wf.Conf, helper, &confFile)
+	results := wf.api.CallApis(wf.Confs[0], helper, &confFile)
 	for _, result := range results {
-		response.SetResult(result)
-		response.StoreResult()
+		wf.response.SetResult(result)
+		wf.response.StoreResult()
 	}
 }

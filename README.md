@@ -10,10 +10,9 @@ Create a program that test and stress API
 4. Store result in files OK
 5. Can call many time an API OK
 6. Measure the time of the call OK
-7. Measure the weight of the answer
-8. Can call many APIs in a workflow
-9. Call APIs with asynchronism mode
-10. Can parallelise the call
+7. Can call many APIs in a workflow
+8. Call APIs with asynchronism mode
+9. Can parallelise the call
 
 ## Features to do
 None for the moment
