@@ -9,6 +9,7 @@ import (
 
 type ManageApiMock struct {
 	IsCallApiCalling bool
+	NumberCalled int
 }
 
 func (mm *ManageApiMock)CallApis(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result{		
@@ -19,6 +20,7 @@ func (mm *ManageApiMock)CallApis(configuration conf.Configuration, httpHelper IH
 	results[0] = resultMock
 	
 	mm.IsCallApiCalling = true
+	mm.NumberCalled += 1
 	return results
 }
 func (mm ManageApiMock)CallGetEndpoint(){

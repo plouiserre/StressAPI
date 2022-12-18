@@ -8,21 +8,30 @@ import (
 	result "github.com/plouiserre/stressapi/pkg/result"
 )
 
-type workflowManagerTest struct {
+func TestHandleOneRequest(t *testing.T) {
+	testHandlesRequest(t, 1)	
 }
 
+func TestHandleMoreThanOneRequest(t *testing.T) {
+	testHandlesRequest(t, 3)
+}
 
-func TestCallMethods(t *testing.T) {
-	workflowManager := WorkflowManager{
-		Conf : configuration.Configuration{},	
+func testHandlesRequest(t *testing.T, calledTimes int){
+	wm := WorkflowManager{
+		Confs : []configuration.Configuration{},	
 	}
+	wm.Confs = make([]configuration.Configuration, calledTimes)
 	
 	api := http.ManageApiMock{}
 	resultMock := result.ResultManagerMock{}
-	workflowManager.HandleRequests(&api, &resultMock)	
+	wm.HandleRequests(&api, &resultMock)	
 	
 	if api.IsCallApiCalling == false{
 		t.Fatalf("Method CallApi is not call in the test TestCallCallApi")
+	}
+	
+	if api.NumberCalled != calledTimes{
+		t.Fatalf("Method CallApis must be called only %d time(s) and not %d", calledTimes, api.NumberCalled)
 	}
 	
 	if resultMock.IsStoreResultCalled == false{
