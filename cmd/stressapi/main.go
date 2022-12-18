@@ -16,7 +16,7 @@ func main() {
 	//TODO tout mettre dans une méthode de workflowmanager
 	workflowManager.Confs = make([]conf.Configuration, len(confJson))
 	for i, conf := range  confJson{
-		workflowManager.Confs[i] = *conf
+		workflowManager.Confs[i] = conf
 	}
 	
 	api := http.ManageApi{}

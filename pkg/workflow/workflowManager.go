@@ -15,13 +15,15 @@ type WorkflowManager struct {
 func (wf WorkflowManager) HandleRequests(api http.IManageApi, response resultPkg.IResultManager) {
 	wf.api = api
 	wf.response = response
-	wf.HandleRequest()
+	for _, conf := range wf.Confs{
+		wf.HandleRequest(conf)
+	}
 }
 
-func(wf WorkflowManager) HandleRequest(){
+func(wf WorkflowManager) HandleRequest(conf configuration.Configuration){
 	confFile := configuration.Configurationhelper{}
 	helper := http.Httphelper{}
-	results := wf.api.CallApis(wf.Confs[0], helper, &confFile)
+	results := wf.api.CallApis(conf, helper, &confFile)
 	for _, result := range results {
 		wf.response.SetResult(result)
 		wf.response.StoreResult()
