@@ -8,11 +8,11 @@ import (
 )
 
 type JsonFile struct {
-	configurations []Configuration
+	configuration Configuration
 }
 
 func (jf *JsonFile) GetConfigurationsFromJson(nameFile string) {
-	var confs []Configuration
+	var conf Configuration
 
 	file, err := os.Open(nameFile)
 
@@ -22,18 +22,19 @@ func (jf *JsonFile) GetConfigurationsFromJson(nameFile string) {
 
 	data, _ := ioutil.ReadAll(file)
 
-	json.Unmarshal(data, &confs)
+	json.Unmarshal(data, &conf)
 
-	jf.configurations = make([]Configuration, len(confs))
-	
+	//jf.workflows = make([]Workflow, len(confs))
+
 	//TODO mettre un copy à la place
-	for i, conf := range confs{
-		jf.configurations[i] = conf
-	}
+	/*for i, conf := range confs {
+		jf.workflows[i] = conf
+	}*/
+	jf.configuration = conf
 
 	defer file.Close()
 }
 
-func (jf *JsonFile) GetConfigurations() []Configuration {
-	return jf.configurations
+func (jf *JsonFile) GetConfigurations() Configuration {
+	return jf.configuration
 }

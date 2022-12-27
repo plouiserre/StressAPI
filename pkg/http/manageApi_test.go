@@ -21,7 +21,7 @@ func TestGetUriWithParameters(t *testing.T) {
 	if manageApiTest.manageApi.Uri != uriWanted {
 		t.Fatalf("Uri searched is %s and now the program return %s", uriWanted, manageApiTest.manageApi.Uri)
 	}
-	if manageApiTest.helperMock.CallTimes != apiCalledTimes{
+	if manageApiTest.helperMock.CallTimes != apiCalledTimes {
 		t.Fatalf("Called Api is called %d and we want  %d called", manageApiTest.helperMock.CallTimes, apiCalledTimes)
 	}
 }
@@ -33,7 +33,7 @@ func TestGetUriWithoutParameters(t *testing.T) {
 	if manageApiTest.manageApi.Uri != uriWanted {
 		t.Fatalf("Uri searched is %s and now the program return %s", uriWanted, manageApiTest.manageApi.Uri)
 	}
-	if manageApiTest.helperMock.CallTimes != apiCalledTimes{
+	if manageApiTest.helperMock.CallTimes != apiCalledTimes {
 		t.Fatalf("Called Api is called %d and we want  %d called", manageApiTest.helperMock.CallTimes, apiCalledTimes)
 	}
 }
@@ -54,7 +54,7 @@ func TestGetCongressmans(t *testing.T) {
 	if manageApiTest.manageApi.httpCode != 200 {
 		t.Fatalf("Result returned by api is 200 and now the program is returning %d", manageApiTest.manageApi.httpCode)
 	}
-	if manageApiTest.helperMock.CallTimes != apiCalledTimes{
+	if manageApiTest.helperMock.CallTimes != apiCalledTimes {
 		t.Fatalf("Called Api is called %d and we want  %d called", manageApiTest.helperMock.CallTimes, apiCalledTimes)
 	}
 }
@@ -70,7 +70,7 @@ func TestPostCongressman(t *testing.T) {
 	if manageApiTest.manageApi.httpCode != 201 {
 		t.Fatalf("Result returned by api is 201 and now the program is returning %d", manageApiTest.manageApi.httpCode)
 	}
-	if manageApiTest.helperMock.CallTimes != apiCalledTimes{
+	if manageApiTest.helperMock.CallTimes != apiCalledTimes {
 		t.Fatalf("Called Api is called %d and we want  %d called", manageApiTest.helperMock.CallTimes, apiCalledTimes)
 	}
 }
@@ -83,7 +83,7 @@ func TestDeleteCongressman(t *testing.T) {
 	ManageNewRequestMethodTest(t, "DELETE")
 }
 
-func ManageNewRequestMethodTest(t *testing.T, verb string){
+func ManageNewRequestMethodTest(t *testing.T, verb string) {
 	apiCalledTimes := 5
 	manageApiTest := ManageApiInitialiedCallApi(true, verb, apiCalledTimes)
 
@@ -97,7 +97,7 @@ func ManageNewRequestMethodTest(t *testing.T, verb string){
 	if manageApiTest.manageApi.httpCode != 200 {
 		t.Fatalf("Result returned by api is 200 and now the program is returning %d", manageApiTest.manageApi.httpCode)
 	}
-	if manageApiTest.helperMock.CallTimes != apiCalledTimes{
+	if manageApiTest.helperMock.CallTimes != apiCalledTimes {
 		t.Fatalf("Called Api is called %d and we want  %d called", manageApiTest.helperMock.CallTimes, apiCalledTimes)
 	}
 }
@@ -106,9 +106,9 @@ func ManageApiInitialiedCallApi(isParameters bool, verb string, timesCalled int)
 	api := ManageApi{}
 	configurationMock := mock.ConfigurationMock{}
 	helper := mock.HttpHelperMock{}
-	conf := confi.Configuration{}
+	conf := confi.Request{}
 	conf.Uri = "http://localhost:10000/congressmans/"
-	if isParameters{
+	if isParameters {
 		conf.Parameters = []string{"2", "mandates"}
 	} else {
 		conf.Parameters = []string{}
@@ -124,4 +124,5 @@ func ManageApiInitialiedCallApi(isParameters bool, verb string, timesCalled int)
 	}
 	return manageApiTest
 }
-//TODO finir cette page 
+
+//TODO finir cette page

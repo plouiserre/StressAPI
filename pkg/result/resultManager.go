@@ -42,7 +42,7 @@ func (rm ResultManager) SaveFile() bool {
 			isOk = false
 		}
 	} else {
-		f, err := os.OpenFile(fileName, os.O_APPEND, 0777)
+		f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0777)
 		if err != nil {
 			isOk = false
 		}

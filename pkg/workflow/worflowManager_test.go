@@ -8,23 +8,62 @@ import (
 	result "github.com/plouiserre/stressapi/pkg/result"
 )
 
-func TestHandleOneRequest(t *testing.T) {
-	testHandlesRequest(t, 1)
-}
-
-func TestHandleMoreThanOneRequest(t *testing.T) {
-	testHandlesRequest(t, 3)
-}
-
-func testHandlesRequest(t *testing.T, calledTimes int) {
-	wm := WorkflowManager{
-		Confs: []configuration.Configuration{},
+func TestCallCallApi(t *testing.T) {
+	/*req_one := configuration.Request{
+		Id:         1,
+		Verb:       "GET",
+		Uri:        "UriFirst",
+		Parameters: []string{"1", "2"},
+		Body:       "",
+		Times:      5,
 	}
-	wm.Confs = make([]configuration.Configuration, calledTimes)
+	req_two := configuration.Request{
+		Id:         2,
+		Verb:       "PUT",
+		Uri:        "UriSecond",
+		Parameters: []string{"666"},
+		Body:       "Body",
+		Times:      10,
+	}
+	wf_one := configuration.Workflow{
+		Id:       1,
+		Requests: []configuration.Request{req_one, req_two},
+	}
+	req_third := configuration.Request{
+		Id:         3,
+		Verb:       "POST",
+		Uri:        "UriThird",
+		Parameters: []string{"zefazreg", "zergazeg", "aoizef"},
+		Body:       "ozaehf",
+		Times:      1,
+	}
+	req_fourth := configuration.Request{
+		Id:         2,
+		Verb:       "DELETE",
+		Uri:        "UriFourth",
+		Parameters: []string{"666"},
+		Body:       "Body",
+		Times:      1,
+	}
+	wf_second := configuration.Workflow{
+		Id:       2,
+		Requests: []configuration.Request{req_third, req_fourth},
+	}
+	conf := configuration.Configuration{
+		StoreFolder: "storefolder",
+		Workflows:   []configuration.Workflow{wf_one, wf_second},
+	}*/
 
+	conf := GenerateConfiguration()
+
+	calledTimes := 4
+
+	wm := WorkflowManager{
+		Configuration: conf,
+	}
 	api := http.ManageApiMock{}
 	resultMock := result.ResultManagerMock{}
-	wm.HandleRequests(&api, &resultMock)
+	wm.HandleWorkflows(&api, &resultMock)
 
 	if api.IsCallApiCalling == false {
 		t.Fatalf("Method CallApi is not call in the test TestCallCallApi")
@@ -40,34 +79,63 @@ func testHandlesRequest(t *testing.T, calledTimes int) {
 }
 
 func SetConfigurations(t *testing.T) {
-	firstConf := configuration.Configuration{
-		Verb:        "GET",
-		Uri:         "http://localhost:10000/congressmans/",
-		Parameters:  []string{},
-		Body:        "",
-		StoreFolder: "/Users/plouiserre/Desktop/Save",
-		Times:       4,
-	}
-	secondConf := configuration.Configuration{
-		Verb:        "POST",
-		Uri:         "http://localhost:10000/congressmans/",
-		Parameters:  []string{},
-		Body:        "{\"Uid\": \"PA666440\",\"Civility\": \"M.\",\"FirstName\": \"Pierre-Louis\",\"LastName\": \"Serré\",\"Alpha\": \"SERRE66\",\"Trigramme\": \"PLS\",\"BirthDate\": \"1989-03-28 00:00:00\",\"BirthCity\": \"Versailles\",\"BirthDepartment\": \"Yvelines\",\"BirthCountry\": \"France\",\"Jobtitle\": \"Ingénieur\",\"CatSocPro\": \"Professions geek\",\"FamSocPro\": \"Cadres et professions intellectuelles supérieures\"}",
-		StoreFolder: "/Users/plouiserre/Desktop/Save",
-		Times:       1,
-	}
-	confs := []configuration.Configuration{
-		firstConf,
-		secondConf,
-	}
+	conf := GenerateConfiguration()
 	wm := WorkflowManager{}
 
-	wm.SetConfigurations(confs)
+	wm.SetConfigurations(conf)
 
-	if len(wm.Confs) != 2 {
-		t.Fatalf("length of Confs from workflowManager is 2 and not %d", len(wm.Confs))
+	if len(wm.Configuration.Workflows) != 2 {
+		t.Fatalf("length of Confs from workflowManager is 2 and not %d", len(wm.Configuration.Workflows))
 	}
-	if wm.Confs[0].Body != "GET" || wm.Confs[1].Body != "POST" {
-		t.Fatalf("Set of Confs are broken")
+	if wm.Configuration.StoreFolder != "storefolder" {
+		t.Fatalf("StoreFolder value is storefolder and no %s", wm.Configuration.StoreFolder)
 	}
+}
+
+func GenerateConfiguration() configuration.Configuration {
+	req_one := configuration.Request{
+		Id:         1,
+		Verb:       "GET",
+		Uri:        "UriFirst",
+		Parameters: []string{"1", "2"},
+		Body:       "",
+		Times:      5,
+	}
+	req_two := configuration.Request{
+		Id:         2,
+		Verb:       "PUT",
+		Uri:        "UriSecond",
+		Parameters: []string{"666"},
+		Body:       "Body",
+		Times:      10,
+	}
+	wf_one := configuration.Workflow{
+		Id:       1,
+		Requests: []configuration.Request{req_one, req_two},
+	}
+	req_third := configuration.Request{
+		Id:         3,
+		Verb:       "POST",
+		Uri:        "UriThird",
+		Parameters: []string{"zefazreg", "zergazeg", "aoizef"},
+		Body:       "ozaehf",
+		Times:      1,
+	}
+	req_fourth := configuration.Request{
+		Id:         2,
+		Verb:       "DELETE",
+		Uri:        "UriFourth",
+		Parameters: []string{"666"},
+		Body:       "Body",
+		Times:      1,
+	}
+	wf_second := configuration.Workflow{
+		Id:       2,
+		Requests: []configuration.Request{req_third, req_fourth},
+	}
+	conf := configuration.Configuration{
+		StoreFolder: "storefolder",
+		Workflows:   []configuration.Workflow{wf_one, wf_second},
+	}
+	return conf
 }

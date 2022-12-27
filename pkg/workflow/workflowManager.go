@@ -6,32 +6,31 @@ import (
 	resultPkg "github.com/plouiserre/stressapi/pkg/result"
 )
 
+// https://medium.com/@gauravsingharoy/asynchronous-programming-with-go-546b96cd50c1
 type WorkflowManager struct {
-	Confs    []configuration.Configuration
-	api      http.IManageApi
-	response resultPkg.IResultManager
+	Configuration configuration.Configuration
+	api           http.IManageApi
+	response      resultPkg.IResultManager
 }
 
-// TODO faire la copie après
-func (wf *WorkflowManager) SetConfigurations(confs []configuration.Configuration) {
-	wf.Confs = make([]configuration.Configuration, len(confs))
-	for i, conf := range confs {
-		wf.Confs[i] = conf
-	}
+func (wf *WorkflowManager) SetConfigurations(configuration configuration.Configuration) {
+	wf.Configuration = configuration
 }
 
-func (wf WorkflowManager) HandleRequests(api http.IManageApi, response resultPkg.IResultManager) {
+func (wf WorkflowManager) HandleWorkflows(api http.IManageApi, response resultPkg.IResultManager) {
 	wf.api = api
 	wf.response = response
-	for _, conf := range wf.Confs {
-		wf.HandleRequest(conf)
+	for _, workflow := range wf.Configuration.Workflows {
+		for _, request := range workflow.Requests {
+			wf.HandleRequest(request)
+		}
 	}
 }
 
-func (wf WorkflowManager) HandleRequest(conf configuration.Configuration) {
+func (wf WorkflowManager) HandleRequest(req configuration.Request) {
 	confFile := configuration.Configurationhelper{}
 	helper := http.Httphelper{}
-	results := wf.api.CallApis(conf, helper, &confFile)
+	results := wf.api.CallApis(req, helper, &confFile)
 	for _, result := range results {
 		wf.response.SetResult(result)
 		wf.response.StoreResult()

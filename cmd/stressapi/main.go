@@ -18,7 +18,8 @@ func main() {
 
 	api := http.ManageApi{}
 	response := result.ResultManager{
-		StoreFolder: confJson[0].StoreFolder,
+		StoreFolder: confJson.StoreFolder,
 	}
-	workflowManager.HandleRequests(&api, &response)
+	workflowManager.HandleWorkflows(&api, &response)
+
 }

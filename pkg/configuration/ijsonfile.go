@@ -1,6 +1,6 @@
 package configuration
 
 type IJsonfile interface {
-	GetConfigurationFromsJson(nameFile string)
+	GetConfigurationsFromJson(nameFile string)
 	GetConfigurations() []*Configuration
 }

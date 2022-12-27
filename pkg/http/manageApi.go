@@ -12,54 +12,54 @@ import (
 )
 
 type ManageApi struct {
-	configuration conf.Configuration
-	responseRequest        string
-	httpHelper    IHttpHelper
-	httpCode      int
-	confHelper    conf.IConfigurationHelper
-	results []result.Result
-	Uri           string
+	request         conf.Request
+	responseRequest string
+	httpHelper      IHttpHelper
+	httpCode        int
+	confHelper      conf.IConfigurationHelper
+	results         []result.Result
+	Uri             string
 }
 
-func (ma *ManageApi) CallApis(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result {
+func (ma *ManageApi) CallApis(req conf.Request, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result {
 
 	ma.httpHelper = httpHelper
 
 	ma.confHelper = confHelper
 
-	ma.configuration = configuration	
-	
-	ma.results  = make([]result.Result, ma.configuration.Times)
-	
-	for i := 0; i < ma.configuration.Times; i++ {
+	ma.request = req
+
+	ma.results = make([]result.Result, ma.request.Times)
+
+	for i := 0; i < ma.request.Times; i++ {
 		ma.CallApi(i)
 	}
 
 	return ma.results
 }
 
-func (ma *ManageApi) CallApi(timeCalled int){
+func (ma *ManageApi) CallApi(timeCalled int) {
 	start := time.Now()
-	if ma.configuration.Verb == "GET" {
+	if ma.request.Verb == "GET" {
 		ma.CallGetEndpoint()
-	} else if ma.configuration.Verb == "POST" {
+	} else if ma.request.Verb == "POST" {
 		ma.CallPostEndpoint()
-	} else if ma.configuration.Verb == "DELETE" {
+	} else if ma.request.Verb == "DELETE" {
 		ma.CallDeleteEndpoint()
-	} else if ma.configuration.Verb == "PUT" {
+	} else if ma.request.Verb == "PUT" {
 		ma.CallPutEndpoint()
 	} else {
 		fmt.Println("Error verb unknown")
 	}
 	end := time.Now()
-	
-	requestDuration :=end.Sub(start)
-	
+
+	requestDuration := end.Sub(start)
+
 	ma.results[timeCalled] = result.Result{
-		Response: ma.responseRequest,
-		HttpCode: ma.httpCode,
-		Body: ma.configuration.Body,
-		UriCalled: ma.configuration.Uri,
+		Response:        ma.responseRequest,
+		HttpCode:        ma.httpCode,
+		Body:            ma.request.Body,
+		UriCalled:       ma.request.Uri,
 		RequestDuration: requestDuration.String(),
 	}
 }
@@ -124,12 +124,12 @@ func (ma *ManageApi) ManageNewRequest(httpMethod string, json_data []byte) {
 }
 
 func (ma *ManageApi) GetCompleteUri() {
-	uri := ma.configuration.Uri
-	for i := 0; i < len(ma.configuration.Parameters); i++ {
+	uri := ma.request.Uri
+	for i := 0; i < len(ma.request.Parameters); i++ {
 		if i == 0 {
-			uri += ma.configuration.Parameters[i]
+			uri += ma.request.Parameters[i]
 		} else {
-			uri += "/" + ma.configuration.Parameters[i]
+			uri += "/" + ma.request.Parameters[i]
 		}
 	}
 	ma.Uri = uri
@@ -138,7 +138,7 @@ func (ma *ManageApi) GetCompleteUri() {
 func (ma *ManageApi) CallPostEndpoint() {
 	is_ok, json_data := ma.GetJsonData()
 	if is_ok {
-		resp, err := ma.httpHelper.PostHttp(ma.configuration.Uri, json_data)
+		resp, err := ma.httpHelper.PostHttp(ma.request.Uri, json_data)
 
 		if err != nil {
 			log.Fatal(err)
@@ -153,7 +153,7 @@ func (ma *ManageApi) CallPostEndpoint() {
 func (ma *ManageApi) GetJsonData() (bool, []byte) {
 	var body map[string]string
 
-	err_json := json.Unmarshal([]byte(ma.configuration.Body), &body)
+	err_json := json.Unmarshal([]byte(ma.request.Body), &body)
 	if err_json != nil {
 		log.Fatal(err_json)
 		return false, nil

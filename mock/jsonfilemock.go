@@ -7,7 +7,7 @@ import (
 )
 
 type JsonFileMock struct {
-	configuration *conf.Configuration
+	configuration *conf.Request
 	IsParameters  bool
 	Verb          string
 }
@@ -16,8 +16,8 @@ func (jf JsonFileMock) GetConfigurationFromJson(nameFile string) {
 	fmt.Print("lol")
 }
 
-func (jf JsonFileMock) GetConfiguration() *conf.Configuration {
-	jf.configuration = &conf.Configuration{}
+func (jf JsonFileMock) GetConfiguration() *conf.Request {
+	jf.configuration = &conf.Request{}
 	jf.configuration.Uri = "http://localhost:10000/congressmans/"
 	if jf.IsParameters {
 		jf.configuration.Parameters = []string{"2", "mandates"}

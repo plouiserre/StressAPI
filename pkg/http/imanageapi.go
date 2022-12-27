@@ -6,12 +6,12 @@ import (
 )
 
 type IManageApi interface {
-	CallApis(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result	
-	CallGetEndpoint() 
-	CallDeleteEndpoint() 
+	CallApis(configuration conf.Request, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result
+	CallGetEndpoint()
+	CallDeleteEndpoint()
 	CallPutEndpoint()
 	ManageNewRequest(httpMethod string, json_data []byte)
-	GetCompleteUri() 
-	CallPostEndpoint() 
-	GetJsonData() (bool, []byte) 
+	GetCompleteUri()
+	CallPostEndpoint()
+	GetJsonData() (bool, []byte)
 }
