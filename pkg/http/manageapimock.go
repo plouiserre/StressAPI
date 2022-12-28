@@ -9,39 +9,39 @@ import (
 
 type ManageApiMock struct {
 	IsCallApiCalling bool
-	NumberCalled int
+	NumberCalled     int
 }
 
-func (mm *ManageApiMock)CallApis(configuration conf.Configuration, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result{		
-	results  := make([]result.Result, 1)
+func (mm *ManageApiMock) CallApis(configuration conf.Request, httpHelper IHttpHelper, confHelper conf.IConfigurationHelper) []result.Result {
+	results := make([]result.Result, 1)
 	resultMock := result.Result{
 		HttpCode: 200,
 	}
 	results[0] = resultMock
-	
+
 	mm.IsCallApiCalling = true
 	mm.NumberCalled += 1
 	return results
 }
-func (mm ManageApiMock)CallGetEndpoint(){
-	
-} 
-func (mm ManageApiMock)CallDeleteEndpoint() {
-	
+func (mm ManageApiMock) CallGetEndpoint() {
+
 }
-func (mm ManageApiMock)CallPutEndpoint(){
-	
+func (mm ManageApiMock) CallDeleteEndpoint() {
+
 }
-func (mm ManageApiMock)ManageNewRequest(httpMethod string, json_data []byte){
-	
+func (mm ManageApiMock) CallPutEndpoint() {
+
 }
-func (mm ManageApiMock)GetCompleteUri(){
-	
-} 
-func (mm ManageApiMock)CallPostEndpoint() {
-	
+func (mm ManageApiMock) ManageNewRequest(httpMethod string, json_data []byte) {
+
 }
-func (mm ManageApiMock)GetJsonData() (bool, []byte) {
+func (mm ManageApiMock) GetCompleteUri() {
+
+}
+func (mm ManageApiMock) CallPostEndpoint() {
+
+}
+func (mm ManageApiMock) GetJsonData() (bool, []byte) {
 	fake := []byte{}
 	return false, fake
 }

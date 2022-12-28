@@ -12,16 +12,14 @@ func main() {
 	jsonFile.GetConfigurationsFromJson("../../configuration.json")
 	confJson := jsonFile.GetConfigurations()
 	workflowManager := wf.WorkflowManager{}
-	
+
 	//TODO tout mettre dans une méthode de workflowmanager
-	workflowManager.Confs = make([]conf.Configuration, len(confJson))
-	for i, conf := range  confJson{
-		workflowManager.Confs[i] = conf
-	}
-	
+	workflowManager.SetConfigurations(confJson)
+
 	api := http.ManageApi{}
-	response := result.ResultManager{		
-		StoreFolder: confJson[0].StoreFolder,
+	response := result.ResultManager{
+		StoreFolder: confJson.StoreFolder,
 	}
-	workflowManager.HandleRequests(&api, &response)
+	workflowManager.HandleWorkflows(&api, &response)
+
 }
